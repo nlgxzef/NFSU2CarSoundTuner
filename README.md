@@ -157,5 +157,5 @@ You can play around with these until you get the desired result. You can even cr
 Also check out: https://docs.google.com/spreadsheets/d/18PUeiZC9SmykspJU8SM2sgKe71cLQ9cM3sbLQuzNAJ4/edit?usp=sharing
 
 # Download
-You can [download Car Sound Tuner](https://github.com/nlgzzrgn/NFSU2CarSoundTuner/releases) from Releases page, or from [NFSMods.xyz](https://www.nfsmods.xyz).
+You can [download Car Sound Tuner](https://github.com/nlgzrgn/NFSU2CarSoundTuner/releases) from Releases page, or from [NFSMods.xyz](https://www.nfsmods.xyz).
 If you want to compile it yourself, you can download the source code from the green Clone or Download button up there.
