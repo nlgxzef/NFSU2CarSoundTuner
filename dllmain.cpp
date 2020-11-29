@@ -80,7 +80,7 @@ struct EngineData
 	char* AuxRAMBankName = " ";
 	int CarID;
 	char* GinsuAccel = " ";
-	int Unk1; // 0 on Hummer and Skyline. 1 on others
+	int UseDualGinsu; // 0 on Hummer and Skyline. 1 on others
 	int GinsuDecelID;
 	int AccelFromIdleID;
 	float MaxRPM;
@@ -363,7 +363,7 @@ void ExportConfigFiles()
 		EngineDataWriter.WriteString("EngineData", "AuxRAMBankName", _ED.AuxRAMBankName);
 		EngineDataWriter.WriteInteger("EngineData", "CarID", _ED.CarID);
 		EngineDataWriter.WriteString("EngineData", "GinsuAccel", _ED.GinsuAccel);
-		EngineDataWriter.WriteInteger("EngineData", "Unk1", _ED.Unk1);
+		EngineDataWriter.WriteInteger("EngineData", "UseDualGinsu", _ED.UseDualGinsu);
 		EngineDataWriter.WriteInteger("EngineData", "GinsuDecelID", _ED.GinsuDecelID);
 		EngineDataWriter.WriteInteger("EngineData", "AccelFromIdleID", _ED.AccelFromIdleID);
 		EngineDataWriter.WriteFloat("EngineData", "MaxRPM", _ED.MaxRPM);
@@ -580,7 +580,7 @@ void ImportConfigFiles()
 			g_ED[i].AuxRAMBankName = EngineDataReader.ReadString("EngineData", "AuxRAMBankName", g_ED[i].AuxRAMBankName);
 			g_ED[i].CarID = EngineDataReader.ReadInteger("EngineData", "CarID", g_ED[i].CarID);
 			g_ED[i].GinsuAccel = EngineDataReader.ReadString("EngineData", "GinsuAccel", g_ED[i].GinsuAccel);
-			g_ED[i].Unk1 = EngineDataReader.ReadInteger("EngineData", "Unk1", g_ED[i].Unk1);
+			g_ED[i].UseDualGinsu = EngineDataReader.ReadInteger("EngineData", "UseDualGinsu", EngineDataReader.ReadInteger("EngineData", "Unk1", g_ED[i].UseDualGinsu));
 			g_ED[i].GinsuDecelID = EngineDataReader.ReadInteger("EngineData", "GinsuDecelID", g_ED[i].GinsuDecelID);
 			g_ED[i].AccelFromIdleID = EngineDataReader.ReadInteger("EngineData", "AccelFromIdleID", g_ED[i].AccelFromIdleID);
 			g_ED[i].MaxRPM = EngineDataReader.ReadFloat("EngineData", "MaxRPM", g_ED[i].MaxRPM);
@@ -739,6 +739,10 @@ int Init()
 	{
 		injector::MakeJMP(0x459240, CarTypeMappingCodeCave, true); // Hook CarTypeMapping call.
 		injector::MakeCALL(0x57EDA3, ImportConfigFiles, true); // InitializeEverything, Read config files in CarSoundData.
+
+		// Fix sweetner data limit (43)
+		injector::WriteMemory<BYTE>(0x45F72C, MAX_FILES, true); // CARSFX_SparkChatter::SetupSFX
+		injector::WriteMemory<BYTE>(0x45E6DA, MAX_FILES, true); // CARSFX_Shift::SetupSFX
 	}
 	
 	return 0;
