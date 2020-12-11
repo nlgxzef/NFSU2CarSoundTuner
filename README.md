@@ -145,9 +145,9 @@ And finally, our Turbo data for the street package is at **CarSoundData\TurboDat
 ```ini
 [Turbo]
 TurboBank=TURBO_TRUCK_0_MB.abk
-Unk1= 8500
-Unk2= 16500
-Unk3= 12500
+TurboChargeVol= 8500
+LowBoostBovVol= 16500
+HighBoostBovVol= 12500
 UnkFloat1= 40.000000
 ChargeTime= 0.500000
 ```

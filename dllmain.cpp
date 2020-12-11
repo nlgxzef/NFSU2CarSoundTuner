@@ -479,9 +479,9 @@ void ExportConfigFiles()
 		CIniReader TurboWriter(CarININame);
 
 		TurboWriter.WriteString("Turbo", "TurboBank", _TDS.TurboBank);
-		TurboWriter.WriteInteger("Turbo", "Unk1", _TDS.Unk1);
-		TurboWriter.WriteInteger("Turbo", "Unk2", _TDS.Unk2);
-		TurboWriter.WriteInteger("Turbo", "Unk3", _TDS.Unk3);
+		TurboWriter.WriteInteger("Turbo", "TurboChargeVol", _TDS.Unk1);
+		TurboWriter.WriteInteger("Turbo", "LowBoostBovVol", _TDS.Unk2);
+		TurboWriter.WriteInteger("Turbo", "HighBoostBovVol", _TDS.Unk3);
 		TurboWriter.WriteFloat("Turbo", "UnkFloat1", _TDS.UnkFloat1);
 		TurboWriter.WriteFloat("Turbo", "ChargeTime", _TDS.ChargeTime);
 	}
@@ -668,9 +668,9 @@ void ImportConfigFiles()
 		if (DoesFileExist(TurboReader.GetIniPath().c_str()))
 		{
 			g_TDS[i].TurboBank = TurboReader.ReadString("Turbo", "TurboBank", g_TDS[i].TurboBank);
-			g_TDS[i].Unk1 = TurboReader.ReadInteger("Turbo", "Unk1", g_TDS[i].Unk1);
-			g_TDS[i].Unk2 = TurboReader.ReadInteger("Turbo", "Unk2", g_TDS[i].Unk2);
-			g_TDS[i].Unk3 = TurboReader.ReadInteger("Turbo", "Unk3", g_TDS[i].Unk3);
+			g_TDS[i].Unk1 = TurboReader.ReadInteger("Turbo", "TurboChargeVol", TurboReader.ReadInteger("Turbo", "Unk1", g_TDS[i].Unk1));
+			g_TDS[i].Unk2 = TurboReader.ReadInteger("Turbo", "LowBoostBovVol", TurboReader.ReadInteger("Turbo", "Unk2", g_TDS[i].Unk2));
+			g_TDS[i].Unk3 = TurboReader.ReadInteger("Turbo", "HighBoostBovVol", TurboReader.ReadInteger("Turbo", "Unk3", g_TDS[i].Unk3));
 			g_TDS[i].UnkFloat1 = TurboReader.ReadFloat("Turbo", "UnkFloat1", g_TDS[i].UnkFloat1);
 			g_TDS[i].ChargeTime = TurboReader.ReadFloat("Turbo", "ChargeTime", g_TDS[i].ChargeTime);
 		}
@@ -741,8 +741,20 @@ int Init()
 		injector::MakeCALL(0x57EDA3, ImportConfigFiles, true); // InitializeEverything, Read config files in CarSoundData.
 
 		// Fix sweetner data limit (43)
-		injector::WriteMemory<BYTE>(0x45F72C, MAX_FILES, true); // CARSFX_SparkChatter::SetupSFX
-		injector::WriteMemory<BYTE>(0x45E6DA, MAX_FILES, true); // CARSFX_Shift::SetupSFX
+		injector::WriteMemory<BYTE>(0x45F72C, MAX_FILES - 1, true); // CARSFX_SparkChatter::SetupSFX
+		injector::WriteMemory<BYTE>(0x45E6DA, MAX_FILES - 1, true); // CARSFX_Shift::SetupSFX
+
+		// Fix engine data limits (60)
+		injector::WriteMemory<BYTE>(0x46137C, MAX_FILES - 1, true); // CARSFX_AIEngine::InitializeEngine
+		injector::WriteMemory<int>(0x461380, MAX_FILES - 1, true);
+		injector::WriteMemory<BYTE>(0x4721BB, MAX_FILES - 1, true); // CARSFX_Shift::PlayDisengageSnd
+		injector::WriteMemory<int>(0x4721BF, MAX_FILES - 1, true);
+		injector::WriteMemory<BYTE>(0x47239E, MAX_FILES - 1, true); // CARSFX_Shift::PlayEngageSnd
+		injector::WriteMemory<int>(0x4723A2, MAX_FILES - 1, true);
+		injector::WriteMemory<BYTE>(0x47D9E8, MAX_FILES - 1, true); // CARSFX_PlayerEngine::InitializeEngine
+		injector::WriteMemory<int>(0x47D9EC, MAX_FILES - 1, true);
+		injector::WriteMemory<BYTE>(0x4851D7, MAX_FILES - 1, true); // CARSFX_SparkChatter::InitSFX
+		injector::WriteMemory<int>(0x4851DB, MAX_FILES - 1, true);
 	}
 	
 	return 0;
